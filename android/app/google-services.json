@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "898418783424",
+    "project_id": "carloan-flutter-project",
+    "storage_bucket": "carloan-flutter-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898418783424:android:8f7fe1bbccbcfdf939a925",
+        "android_client_info": {
+          "package_name": "com.example.car_loan_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898418783424-gqk030mlovlh4ufgs8v9jcrsn6hbar3p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlxirFeqWknJzbeRRVeNrXdhOlvILrsoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898418783424-gqk030mlovlh4ufgs8v9jcrsn6hbar3p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "898418783424-g3s1g4h757io2n1q2pq7kuicr4qb3v5u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carLoanProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

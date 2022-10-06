@@ -1,0 +1,1 @@
+enum MenuAction{ logout , cars,motorcycle,rental,spareparts,adverts}
