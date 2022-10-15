@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:car_loan_project/views/admin.dart';
 import 'package:car_loan_project/views/buy.dart';
+import 'package:car_loan_project/views/imagepicker.dart';
 //import 'package:car_loan_project/views/categories.dart';
 import 'package:car_loan_project/views/loan.dart';
 import 'package:car_loan_project/views/login_view.dart';
@@ -204,7 +205,7 @@ class _HomeInterfaceState extends State<HomeInterface> {
           children: [ Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              
+           
               PopupMenuButton <MenuAction>(iconSize:  MediaQuery.of(context).size.width*0.08,icon: Icon(Icons.format_list_bulleted),
                 onSelected: ((value) async {
                   switch (value){
@@ -227,7 +228,8 @@ class _HomeInterfaceState extends State<HomeInterface> {
                       Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Category('Spareparts', 'Category')),
-            );break;
+            );
+            break;
               case MenuAction.loans:
                Navigator.push(
               context,

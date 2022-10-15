@@ -74,7 +74,15 @@ class _MyWalletState extends State<MyWallet> {
 
 
     );} else{
-      throw showErrorDialog(context, 'An error occurred');
+   //   showErrorDialog(context, 'Login/Signup to continue');
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: BackButton(color: Colors.orange),
+        ),
+        backgroundColor: Colors.white,
+        body: Center(child: Text('Please login/Signup to access this feature',style: TextStyle(fontSize: 15),),),
+      );
     }
   }
 }

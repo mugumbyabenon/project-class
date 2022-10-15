@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'dart:ui' as ui;
 import 'dart:developer' as devtools show log;
 
 import '../utilities/showErrorDialog.dart';
@@ -36,7 +36,7 @@ class _LoginViewState extends State<LoginView> {
     _password.dispose();
     super.dispose();
   }
-
+bool isLoading =false;
  @override
   Widget build(BuildContext context) {
    
@@ -51,100 +51,144 @@ class _LoginViewState extends State<LoginView> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black.withOpacity(0.5),
         body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-                children: [SizedBox(height: MediaQuery.of(context).size.height*0.1,),Icon(
-                  Icons.car_rental_outlined,
-                  size: 100,
-                  color: Colors.greenAccent,
-                ),SizedBox(height: 5.0),
-                Text(
-                  'Car_Free',
-                  style: GoogleFonts.bebasNeue(
-                    fontSize: 52,
+          child: Stack(
+            children:[ Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+                  children: [SizedBox(height: MediaQuery.of(context).size.height*0.1,),Icon(
+                    Icons.car_rental_outlined,
+                    size: 100,
                     color: Colors.greenAccent,
-                  ),
-                ),SizedBox(height: 10.0),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:25.0),
-                      child: TextField(
-                        controller: _email,
-                        keyboardType: TextInputType.emailAddress,
-                        autocorrect: false,
-                        enableSuggestions: true,
-                        decoration:  InputDecoration(
-                          hintText: 'Enter your email here',
-                          fillColor: Colors.grey[200],
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.deepPurple),
-                            borderRadius: BorderRadius.circular(12),
+                  ),SizedBox(height: 5.0),
+                  Text(
+                    'Car_Free',
+                    style: GoogleFonts.bebasNeue(
+                      fontSize: 52,
+                      color: Colors.greenAccent,
+                    ),
+                  ),SizedBox(height: 10.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:25.0),
+                        child: TextField(
+                          controller: _email,
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          enableSuggestions: true,
+                          decoration:  InputDecoration(
+                            hintText: 'Enter your email here',
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
+                      ), 
+                      SizedBox(height: 10.0,),
+                       Padding(
+                         padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                         child: TextField(
+                          controller: _password,
+                          obscureText: true,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          decoration:  InputDecoration(
+                            hintText: 'Enter your password',
+                             fillColor: Colors.grey[200],
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            
+                          ),
                       ),
-                    ), 
-                    SizedBox(height: 10.0,),
-                     Padding(
-                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                       child: TextField(
-                        controller: _password,
-                        obscureText: true,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        decoration:  InputDecoration(
-                          hintText: 'Enter your password',
-                           fillColor: Colors.grey[200],
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.deepPurple),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          
-                        ),
+                       ),
+                    TextButton(
+                      child: const Text('Login'),
+                      onPressed: (() async {
+                       final email = _email.text;
+                       final password = _password.text;
+                     try{
+                      setState(() {
+                        isLoading = true;
+                      });
+                      await AuthService.firebase().login(
+                        email: email, 
+                      passsword: password);
+                      setState(() {
+                        isLoading=false;
+                      });
+                        final user = await AuthService.firebase().currentUser;
+                        if (user?.isEmailVerified??false){
+                                Navigator.of(context).pushNamedAndRemoveUntil(notesRoutes, (route) => false);
+                        } else {
+                                final shouldLogout = await dialoglogin(context);
+                                 if (shouldLogout == true){
+                   await AuthService.firebase().sendEmailVerification();
+                   Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoutes, (route) => false);
+                  }
+                        }
+                        
+                     } on FirebaseAuthException catch (e){
+                       setState(() {
+                        isLoading=false;
+                      });
+                      if (e.code == 'user-not-found'){
+                         setState(() {
+                        isLoading=false;
+                      });
+                        await showErrorDialog(context, 'User not found',);
+                      } else if (e.code =='wrong-password'){
+                         setState(() {
+                        isLoading=false;
+                      });
+                        await showErrorDialog(context, 'You have entered a wrong password');
+                      } else 
+                       setState(() {
+                        isLoading=false;
+                      });
+                       showErrorDialog(context, 
+                      'Error: ${e.code}');
+                
+                     } catch (e){
+                       setState(() {
+                        isLoading=false;
+                      });
+                       await showErrorDialog(context, 
+                      e.toString());
+                     }
+                      }),
+                      ),
+                      TextButton(onPressed: (){
+                        Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (context) => RegisterView()), (r) => false);
+                      }, 
+                      child: const Text("Not yet registered? Register Here")),
+                  ],
+                ), Visibility(
+                  visible: isLoading,
+                  child: Positioned.fill(
+                    right: 5,
+                    left: 5,
+                    top: 5,
+                    child: BackdropFilter(
+                       filter: ui.ImageFilter.blur(
+                  sigmaX: 1.0,
+                  sigmaY: 1.0,
+                              ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          Text('Login in, Please wait',style: TextStyle(color: Colors.red,fontSize: 15,fontWeight: FontWeight.bold),)
+                        ],
+                      ),
                     ),
-                     ),
-                  TextButton(
-                    child: const Text('Login'),
-                    onPressed: (() async {
-                     final email = _email.text;
-                     final password = _password.text;
-                   try{
-                    await AuthService.firebase().login(
-                      email: email, 
-                    passsword: password);
-                      final user = await AuthService.firebase().currentUser;
-                      if (user?.isEmailVerified??false){
-                              Navigator.of(context).pushNamedAndRemoveUntil(notesRoutes, (route) => false);
-                      } else {
-                              final shouldLogout = await dialoglogin(context);
-                               if (shouldLogout == true){
-                 await AuthService.firebase().sendEmailVerification();
-                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  loginRoutes, (route) => false);
-                }
-                      }
-                      
-                   } on FirebaseAuthException catch (e){
-                    if (e.code == 'user-not-found'){
-                      await showErrorDialog(context, 'User not found',);
-                    } else if (e.code =='wrong-password'){
-                      await showErrorDialog(context, 'You have entered a wrong password');
-                    } else showErrorDialog(context, 
-                    'Error: ${e.code}');
-              
-                   } catch (e){
-                     await showErrorDialog(context, 
-                    e.toString());
-                   }
-                    }),
-                    ),
-                    TextButton(onPressed: (){
-                      Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (context) => RegisterView()), (r) => false);
-                    }, 
-                    child: const Text("Not yet registered? Register Here")),
-                ],
-              ),
+                  ),
+                )
+         ] ),
         ),
       ),
     ); 
