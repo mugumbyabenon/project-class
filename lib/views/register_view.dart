@@ -225,8 +225,9 @@ class _RegisterViewState extends State<RegisterView> {
                                'first_name': first_name,
                                   'company name': companyname,
                                   'last name': lastname,
-                                  'phone_number':phone_number.toString(),
+                                  'phone_number': phone_number.toString(),
                                   'email': email,
+                                  'My Money': 0,
                                   'image': 'https://www.pngitem.com/pimgs/m/150-1503945_transparent-user-png-default-user-image-png-png.png',
                                 
                                 },

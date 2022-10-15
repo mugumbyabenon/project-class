@@ -5,7 +5,9 @@ import 'dart:io';
 
 import 'package:car_loan_project/constants/routes.dart';
 import 'package:car_loan_project/enums/menu_action.dart';
+import 'package:car_loan_project/views/mainpage.dart';
 import 'package:car_loan_project/views/notes_view.dart';
+import 'package:car_loan_project/views/sellerApprove.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -98,7 +100,19 @@ class _UserInformationState extends State<UserInformation> {
                       Navigator.pushAndRemoveUntil(context,
                 MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
              ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content:Text('You have successfully logged out')));
-                  }
+                  }break;
+                case MenuAction.approve:
+                 Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ApproveBySeller()),);
+                break; 
+                case MenuAction.adverts:
+                   Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MyAdverts()),);
+                break; 
+                case MenuAction.interest:
+                   Navigator.push(context,
+                MaterialPageRoute(builder: (context) => PurchaseReq()),);
+                break; 
               }
             }),
             itemBuilder: (context) {
@@ -106,6 +120,15 @@ class _UserInformationState extends State<UserInformation> {
                 const PopupMenuItem(
                   value: MenuAction.logout,
                   child: Text('Log out'),
+                  ),const PopupMenuItem(
+                  value: MenuAction.adverts,
+                  child: Text('Posted Adverts'),
+                  ),const PopupMenuItem(
+                  value: MenuAction.approve,
+                  child: Text('Approve Loans'),
+                  ),const PopupMenuItem(
+                  value: MenuAction.interest,
+                  child: Text('Purchase Requests'),
                   )
               ];
             },

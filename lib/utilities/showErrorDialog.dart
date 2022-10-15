@@ -1,11 +1,49 @@
+import 'package:car_loan_project/views/buy.dart';
 import 'package:flutter/material.dart';
 
+import '../views/loan.dart';
 import '../views/login_view.dart';
 
 Future<void> showErrorDialog(BuildContext context, String text,){
    return showDialog(context: context,builder: (context){
         return AlertDialog(
           title:  const Text('An error occurred '),
+          content: Text(text),
+          actions: [
+            TextButton(onPressed: (){
+              Navigator.of(context).pop();
+            }
+            , child: const Text('OK'))
+          ],
+        );
+   });
+}
+
+Future<bool> DeleteAdvert(BuildContext context,){
+ return showDialog<bool>(
+    context: context, 
+    builder: (context){
+       return AlertDialog(title: const Text('Remove Advert'),
+       content: const Text('Are you sure you want to delete this Advert'),
+       actions: [TextButton(
+        onPressed: (){
+          Navigator.of(context).pop(true);
+        },
+        child:const Text('ok'),),
+        TextButton(onPressed: (){
+           Navigator.of(context).pop(false);
+        }, 
+        child: const Text('Cancel'))
+        ],
+       );   
+    },
+    ).then((value) => value ?? false);
+}
+
+Future<void> PurchaseRequest(BuildContext context, String text,){
+   return showDialog(context: context,builder: (context){
+        return AlertDialog(
+          title:  const Text('Thank you '),
           content: Text(text),
           actions: [
             TextButton(onPressed: (){
@@ -25,6 +63,7 @@ Future<void> PromptLogin(BuildContext context){
           actions: [
             TextButton(onPressed: (){
               Navigator.of(context).pop();
+              
                Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LoginView()),
@@ -35,3 +74,33 @@ Future<void> PromptLogin(BuildContext context){
         );
    });
 }
+
+Future<void> BuyLoan(BuildContext context,final price,final carname,final image,final sellerID,final email,
+final rate,final advertpk){
+   return showDialog(context: context,builder: (context){
+        return AlertDialog(
+          title:  Center(child: const Text('Options')),
+          content: Text('Do you want to buy or apply for loan'),
+        actions: [ Row(
+                children: [
+                  ElevatedButton(onPressed: (){
+                    Navigator.of(context).pop(); 
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  Buy(advertpk)),
+            );          
+                  }, child: Text('Buy')),SizedBox(width: MediaQuery.of(context).size.width*0.3,),
+                   ElevatedButton(onPressed: (){
+                      Navigator.of(context).pop(); 
+                      Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  RequestLoan(price??0,carname,image,sellerID,email,rate,advertpk)),
+            );
+                   }, child: Expanded(child: Text('Loan')))
+                ],
+              ),],
+        );
+   });
+}
+
+

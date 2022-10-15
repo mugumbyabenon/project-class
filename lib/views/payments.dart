@@ -320,6 +320,7 @@ class MakePayment extends StatefulWidget {
  final String? pk;
   final  balance;
   final paid;
+  
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
@@ -547,30 +548,12 @@ class _MyHomePageState extends State<MakePayment> {
     _showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       try{
-      log('${widget.pk}');
-      form.save();
-       var collection = await FirebaseFirestore.instance.collection('Loans').doc('${widget.pk}');
-      // log('${_amountpaid.text.trim()}');
-      if(widget.balance > int.parse(_amountpaid.text)){
-      int car = int.parse(_amountpaid.text);
-      int paid = widget.paid + car;
-       int balance = widget.balance - car;
-        await   collection.update({'Balance': '${balance.toString()}'});
-         await   collection.update({'Paid Money': '${paid.toString()}'});
-         if (balance <=0){
-          await collection.delete();
-         }
-       log('$paid');
-              Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
-      // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment is being processed.Your account balance will then be updated');}
-      else {
-        _showInSnackBar('The amount you want to pay is greater than the balance');
-      }
+        PaymentProcess(widget.pk, widget.paid, _amountpaid.text, widget.balance, context);
     } catch (e){
       throw showErrorDialog(context, '$e');
-    }} 
+    }
+    
+    } 
         },// _validateInputs(widget.pk,widget.balance),
         child:  Text(
           Strings.pay.toUpperCase(),
@@ -586,4 +569,99 @@ class _MyHomePageState extends State<MakePayment> {
       duration: new Duration(seconds: 3),
     ));
   }
+}
+
+
+
+PaymentProcess(final pk,final paids,final amountpaid,final balances,context) async{    
+       var collection = await FirebaseFirestore.instance.collection('Loans').doc('${pk}');
+      // log('${_amountpaid.text.trim()}');
+      if(balances > int.parse(amountpaid)){
+      int car = int.parse(amountpaid);
+      int paid = paids + car;
+       int balance = balances - car;
+        await   collection.update({'Balance': '${balance.toString()}'});
+         await   collection.update({'Paid Money': paid});
+          var docSnapshot = await collection.get();
+          if (docSnapshot.exists) {
+            Map<String, dynamic>? data = docSnapshot.data();
+               final IntialCompanyInterest=data?['Company Interest']??1;
+               final sellerID=data?['selleremail']??1;
+               final month =int.parse(data?['NumberOfMonths']??1); 
+               final monthlyfee =balance/month;
+               var companyinterest= await FirebaseFirestore.instance.collection('CompanyInterest').doc('interest'); 
+               final company = await companyinterest.get(); 
+                  await   collection.update({'MonthlyFee': double.parse((monthlyfee). toStringAsFixed(1)).ceil().toString()});      
+               if (IntialCompanyInterest>car){
+                final remainingcompanyinterest= IntialCompanyInterest - car;
+                 await   collection.update({'Company Interest':remainingcompanyinterest });
+                  if (company.exists) {
+            Map<String, dynamic>? comp = company.data();
+               final home = comp?['interest']??1;
+               final k =home+car;
+               companyinterest.update({'interest':k});
+               }
+               }else{
+                    if (company.exists) {
+            Map<String, dynamic>? comp = company.data();
+               final home = comp?['interest']??1;
+               final k =home+IntialCompanyInterest;
+               companyinterest.update({'interest':k});
+               }
+                 final update =car - IntialCompanyInterest;
+               var another = await FirebaseFirestore.instance.collection('users').doc('${sellerID}').get();
+                await   collection.update({'Company Interest':0 });
+               if (another.exists) {
+            Map<String, dynamic>? datas = another.data();
+            final sellerportion=datas?['My Money']??0;
+             final pending=datas?['Pending']??0;
+             if(pending >= update){
+              final kk= pending -update;
+              await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'Pending':kk});
+             }
+             if(pending <= update){
+               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'Pending':0});
+             }
+            if(sellerportion==null){
+               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'My Money':update});
+            }else{
+              final sellermoney = sellerportion+update;
+               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'My Money':sellermoney}); 
+            }
+            }}
+            }
+         if (balance <=0){
+          await collection.delete();
+           Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+                 ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text('Thank you for clearing your loan'),
+      duration: new Duration(seconds: 3),
+    ));
+         }
+       log('$paid');
+              Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+      // Encrypt and send send payment details to payment gateway
+       ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text('Payment is being processed.Your account balance will then be updated'),
+      duration: new Duration(seconds: 3),
+    ));
+     }
+      else { if(balances == 1){
+          await collection.delete();
+           Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+                 ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text('Thank you for clearing your loan'),
+      duration: new Duration(seconds: 3),
+    ));} else{
+        ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text('The amount you want to pay is greater than the pending balance'),
+      duration: new Duration(seconds: 3),
+    ));}
+       
+      }
+  
+    
 }

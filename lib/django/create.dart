@@ -1,14 +1,14 @@
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class Rent extends StatefulWidget {
-  const Rent({super.key});
+class CreatePage extends StatefulWidget {
+  const CreatePage({super.key});
 
   @override
-  State<Rent> createState() => _RentState();
+  State<CreatePage> createState() => _CreatePageState();
 }
 
-class _RentState extends State<Rent> {
+class _CreatePageState extends State<CreatePage> {
   @override
   Widget build(BuildContext context) {
     return Container();

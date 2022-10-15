@@ -15,7 +15,11 @@ class RequestLoan extends StatefulWidget {
   final price;
   final carname;
   final image;
-  RequestLoan(this.price,this.carname,this.image);
+   final pk;
+   final email;
+   final rate;
+   final advertpk;
+  RequestLoan(this.price,this.carname,this.image,this.pk,this.email,this.rate,this.advertpk);
  // const RequestLoan({super.key});
 
   @override
@@ -56,10 +60,12 @@ class _RequestLoanState extends State<RequestLoan> {
   }
 
   String? period;
+   String? Intial;
   String? payment;
   String? delivery;
   String? viewfee;
    String? TotalToPay;
+    int? NumberOfMonths;
     String? message;
   String? monthlyfee;
   String? interest;
@@ -90,82 +96,77 @@ class _RequestLoanState extends State<RequestLoan> {
  
   Future dropdownCallback(String? selectedValue) async{
       if (selectedValue is String){
+        final intial =widget.price*0.35;
         setState(() {
           period = selectedValue;
+          Intial =myFormat.format(double. parse((intial). toStringAsFixed(1)).ceil());
         });
         if (period == '3'){
-           final interests=  widget.price*0.15;
-            final TotalLoanFee = widget.price+interests;
+          final IntialDeposits = widget.price*0.35;
+            final TotalLoanFee = widget.price-IntialDeposits;
             final monthlyfees = TotalLoanFee /3;
              final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*3)-widget.price;
-             final amountToPay =profit+widget.price;
-             final  n = 0.2*amountToPay;
-             final MonthlyFee = (amountToPay - n)/3;
-              final deposit = double. parse((n). toStringAsFixed(1)).ceil();
+              final deposit = double. parse((IntialDeposits). toStringAsFixed(1)).ceil();
             setState(() {
-                monthlyfee =double.parse((MonthlyFee). toStringAsFixed(1)).ceil().toString();
+                monthlyfee =double.parse((monthlyfees).toStringAsFixed(1)).ceil().toString();
                interest =profit.toString();
-                TotalToPay = amountToPay.toString();
+                TotalToPay = widget.price.toString();
                 viewfee =myFormat.format(double. parse((monthlyfees). toStringAsFixed(1)).ceil());
                 payment = '3 months';
                 IntialDeposit = deposit.toString();
+                NumberOfMonths =3;
             });
           
             return monthlyfee;
         } if (period == '6'){
-           final interests=  widget.price*0.17;
-            final TotalLoanFee = widget.price+interests;
+           final IntialDeposits = widget.price*0.35;
+            final TotalLoanFee = widget.price-IntialDeposits;
             final monthlyfees = TotalLoanFee /6;
              final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*6)-widget.price;
-             final amountToPay =profit+widget.price;
-               final  n = 0.2*amountToPay;
-              final deposit = double. parse((n). toStringAsFixed(1)).ceil();
-               final MonthlyFee = (amountToPay - n)/6;
+              final deposit = double. parse((IntialDeposits). toStringAsFixed(1)).ceil();
+              
               monthlyfees.round();
             setState(() {
-                 monthlyfee =double.parse((MonthlyFee). toStringAsFixed(1)).ceil().toString();
+                 monthlyfee =double.parse((monthlyfees). toStringAsFixed(1)).ceil().toString();
                interest =profit.toString();
-                TotalToPay = amountToPay.toString();
+                TotalToPay = widget.price.toString();
                 viewfee =myFormat.format(double. parse((monthlyfees). toStringAsFixed(1)).ceil());
                 payment = '6 months';
                  IntialDeposit = deposit.toString();
+                 NumberOfMonths =6;
             });
             log('$TotalToPay');
             return monthlyfee;
         } if (period == '12'){
-           final interests=  widget.price*0.195;
-            final TotalLoanFee = widget.price+interests;
+            final IntialDeposits = widget.price*0.35;
+            final TotalLoanFee = widget.price-IntialDeposits;
             final monthlyfees = TotalLoanFee /12;
-               final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*12)-widget.price;
-               final amountToPay =profit+widget.price;
-                 final  n = 0.2*amountToPay;
-                  final MonthlyFee = (amountToPay - n)/12;
-              final deposit = double. parse((n). toStringAsFixed(1)).ceil();
+               final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*12)-widget.price;            
+              final deposit = double. parse((IntialDeposits). toStringAsFixed(1)).ceil();
             setState(() {
-                monthlyfee =double.parse((MonthlyFee). toStringAsFixed(1)).ceil().toString();
+                monthlyfee =double.parse((monthlyfees). toStringAsFixed(1)).ceil().toString();
                interest =profit.toString();
-                TotalToPay = amountToPay.toString();
+                TotalToPay = widget.price.toString();
                 viewfee =myFormat.format(double. parse((monthlyfees). toStringAsFixed(1)).ceil());
                 payment = '1 year';
                  IntialDeposit = deposit.toString();
+                 NumberOfMonths =12;
             });
             return monthlyfee;
         } if (period == '24'){
-           final interests=  widget.price*0.25;
-            final TotalLoanFee = widget.price+interests;
+           final IntialDeposits = widget.price*0.35;
+            final TotalLoanFee = widget.price-IntialDeposits;
             final monthlyfees = TotalLoanFee /24;
-             final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*24)-widget.price;
-             final amountToPay =profit+widget.price;
-               final  n = 0.2*amountToPay;
-                final MonthlyFee = (amountToPay - n)/24;
-              final deposit = double. parse((n). toStringAsFixed(1)).ceil();
+             final profit = (double. parse((monthlyfees). toStringAsFixed(1)).ceil()*24)-widget.price;    
+              final deposit = double. parse((IntialDeposits). toStringAsFixed(1)).ceil();
             setState(() {
-              monthlyfee =double. parse((MonthlyFee). toStringAsFixed(1)).ceil().toString();
+              monthlyfee =double. parse((monthlyfees). toStringAsFixed(1)).ceil().toString();
                interest =profit.toString();
-                TotalToPay = amountToPay.toString();
+                TotalToPay = widget.price.toString();
                 viewfee =myFormat.format(double. parse((monthlyfees). toStringAsFixed(1)).ceil());
                 payment = '2 Years';
                  IntialDeposit = deposit.toString();
+                 NumberOfMonths =24;
             });
       
             return monthlyfee;
@@ -273,6 +274,10 @@ class _RequestLoanState extends State<RequestLoan> {
                
                 keyboardType: TextInputType.number,
                
+              ),SizedBox(height: 20,),Row(
+                children: [
+                  Text('Rate                 ${widget.rate}% per month',style: TextStyle(fontSize: 23),),
+                ],
               ),
 
 
@@ -299,6 +304,8 @@ class _RequestLoanState extends State<RequestLoan> {
                                  DropdownMenuItem(child: Text('Pick Up',style: TextStyle(fontSize: 20,color: Colors.orange)),value: 'Pick Up from Bond',),
                               ],value: delivery, onChanged: deliveryStatus)
                             ],),SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+
+                            
               Row(children: [
                             const  Padding(
                                 padding:  EdgeInsets.all(.0),
@@ -317,8 +324,8 @@ class _RequestLoanState extends State<RequestLoan> {
                             ],),SizedBox(height: MediaQuery.of(context).size.height*0.03,),
                             Row(
                               children: [
-                                Text('Total Monthly Fee to pay',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),SizedBox(width: MediaQuery.of(context).size.width*0.1),
-                                Expanded(child: Text('Shs.${viewfee??'0'}',style: TextStyle(fontSize: 20,color: Colors.orange))),
+                                Text('Intial Deposit',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),SizedBox(width: MediaQuery.of(context).size.width*0.1),
+                                Expanded(child: Text('Shs.${Intial??'0'}',style: TextStyle(fontSize: 20,color: Colors.orange))),
                               ],
                             ),
                             
@@ -344,16 +351,17 @@ class _RequestLoanState extends State<RequestLoan> {
                                 CollectionReference loan = FirebaseFirestore.instance.collection('Loans');
                                 loan.doc('$uid').set({
                                   'names':_name.text.trim(),
-                                   'Application Date':date,
+                                   'Application Date':DateFormat.yMMMMd().format(date),
                                     'delivery':delivery,
                                   'profit':interest,  
                                 'TotalAmount':TotalToPay, 
                                  'email':emails,   
                                   'uid':uid,
                                    'username':username,
-                                  'MonthlyFee':monthlyfee,
+                                  'MonthlyFee':monthlyfee.toString(),
                                    'Status': 'Pending Approval',
-                                   'Query':true,
+                                   'Query':'',
+                                   'app date':'Application Date',
                                 'Occupation':_occupation.text.trim(),
                                 'NIN no.':_nin.text.trim(),  
                                  'Car name': widget.carname, 
@@ -362,13 +370,20 @@ class _RequestLoanState extends State<RequestLoan> {
                                 'image': widget.image,
                                 'button':'Cancel Application',
                                 'PaymentPeriod':payment,
+                                 'PaymentPeriodButton':'Payment Period',
                                 'Balance':TotalToPay,
                                 'Paid Money':int.parse('0'),
                                 'Intial Deposit':IntialDeposit,
-                                'Provider_ID':'',
+                                'Price':widget.price,
                                 'Provider_name':'',
                                 'Deposit_Button':'Intial Deposit Required',
-                                'Acquistion':'Delivery Method'
+                                'Acquistion':'Delivery Method',
+                                'NumberOfMonths':NumberOfMonths.toString(),
+                                'sellerID': widget.pk,
+                                'seller':'',
+                                'Advert Pk':widget.advertpk,
+                                'selleremail':widget.email,
+                                'rate':widget.rate,
                                 });
                                 Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (context) => NotesView()), (r) => false);

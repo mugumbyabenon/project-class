@@ -1,1 +1,1 @@
-enum MenuAction{ logout , cars,motorcycle,rental,spareparts,adverts}
+enum MenuAction{ logout , cars,motorcycle,rental,spareparts,adverts,approve,loans,interest}

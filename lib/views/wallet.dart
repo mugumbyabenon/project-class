@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:car_loan_project/main.dart';
 import 'package:car_loan_project/utilities/showErrorDialog.dart';
 import 'package:car_loan_project/views/dealerDetails.dart';
+import 'package:car_loan_project/views/mywallet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../constants/routes.dart';
 import '../enums/menu_action.dart';
 import '../services/auth/auth_service.dart';
@@ -40,7 +40,29 @@ class _WalletState extends State<Wallet> {
           ),
           backgroundColor: Colors.black,
           elevation: 0.0,
-        title: Center(child: Text('Loan Repayment',style: TextStyle(color: Colors.white),)),
+        title: Center(child: Row(
+          children: [
+            Text('Loan Repayment',style: TextStyle(color: Colors.white),),SizedBox(width: 130,),
+              PopupMenuButton <MenuAction>(iconSize:  MediaQuery.of(context).size.width*0.08,icon: Icon(Icons.account_balance_wallet,color: Colors.white,),
+                    onSelected: ((value) async {
+                      switch (value){
+                        case MenuAction.approve:
+                  Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyWallet()),);
+                    
+                      }
+                    }),
+                    itemBuilder: (context) {
+                      return [ 
+                        const PopupMenuItem(
+                          value: MenuAction.approve,
+                          child: Text('My Wallet'),
+                          )
+                      ];
+                    },
+                   ),
+          ],
+        )),
       ),
       body: LoanView(),
     );
@@ -99,104 +121,68 @@ class _LoanViewState extends State<LoanView> {
                           children: [Container(
                             width: MediaQuery.of(context).size.width,
                             child: Image.network('${data?['image']??""}', width:  MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height*0.3,
+                            height: MediaQuery.of(context).size.height*0.2,
                                                 fit: BoxFit.cover),
                           ),SizedBox(height: MediaQuery.of(context).size.height*0.01),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('Car Name',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                                Expanded(
-                                  child: Text('${data?['Car name']??""}',style: TextStyle(
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),
-                              Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('Monthly Fee',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                                Expanded(
-                                  child: Text('Shs.${myFormat.format(int.parse(data?['MonthlyFee']??""))}',style: TextStyle(
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),
-                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('Payment Period',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                                Expanded(
-                                  child: Text('${data?['PaymentPeriod']??""}',style: TextStyle(
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('Total Amount',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.025,),
-                                Expanded(
-                                  child: Text('Shs.${myFormat.format(int.parse(data?['TotalAmount']??""))}',style: TextStyle(
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01), Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [Text('${data?['Deposit_Button']??"Pending Balance"}',style: TextStyle(fontWeight: FontWeight.bold,
-                                    fontSize: 16),),SizedBox(width: MediaQuery.of(context).size.width*0.025,),
-                                    Expanded(
-                                      child: Text('Shs.${myFormat.format(int.parse(data?['Intial Deposit']??"${data?['Balance']??0}"))}',style: TextStyle(
-                                      fontSize: 20),),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),
-                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('${data?['Acquistion']??"Amount Paid"}',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                                Expanded(
-                                  child: Text('${data?['delivery']??"${myFormat.format(int.parse(data?['Paid Money']??""))}"}',style: TextStyle(
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),  Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Text('Loan Status',style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20),),SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                                Expanded(
-                                  child: Text('${data?['Status']??"Active"}',style: TextStyle(color: Colors.redAccent,
-                                  fontSize: 20),),
-                                ),
-                              ],
-                            ),SizedBox(height: MediaQuery.of(context).size.height*0.01),
+
+                                    
                            ElevatedButton(onPressed: ()async{
+                      await      Loans();
                             if (data?['button'] == null){
-                               log('null');
+                               log('${await Loans()}');
                                final balance = int.parse(data?['Balance']??0);
-                               final paid = int.parse(data?['Paid Money']??0);
+                               final paid = data?['Paid Money']??0;
                         if (balance <= 0){
                            await  FirebaseFirestore.instance.collection('Loans').doc(uid).delete();
-                        }   else {    
+                        }      
                     Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) =>  MakePayment(title: Strings.appName,balance: balance ,pk: data?['uid']??'0',
                 paid: paid,)),
-              );       }        
+              );   
+                         
                             } else{
                               log('hey hey');
                               await  FirebaseFirestore.instance.collection('Loans').doc(uid).delete();
                             }
-                           }, child: Text('${data?['button']??"Make Payment"}'))
+                           }, child: Text('${data?['button']??"Make Payment"}')),
+                           Text('Loan Status',style: TextStyle(fontWeight: FontWeight.bold,
+                                      fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.02,),
+                                      Text('${data?['Status']??"Active"}',style: TextStyle(color: Colors.redAccent,
+                                      fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                            Text('Car Name',style: TextStyle(fontWeight: FontWeight.bold,
+                              fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.01,),
+                              Text('${data?['Car name']??""}',style: TextStyle(
+                              fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                               Column(
+                              children: [
+                                Text('${data?['Deposit_Button']??"Pending Balance"}',style: TextStyle(fontWeight: FontWeight.bold,
+                                  fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.025,),
+                                  Text('Shs.${myFormat.format(int.parse(data?['Intial Deposit']??"${data?['Balance']??0}"))}',style: TextStyle(
+                                  fontSize: 20,color: Colors.red),),
+                              ],
+                            ),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                              Text('Monthly Fee',style: TextStyle(fontWeight: FontWeight.bold,
+                                fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.02,),
+                                Text('Shs.${myFormat.format(int.parse(data?['MonthlyFee']??""))}',style: TextStyle(
+                                fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                             Text('${data?['PaymentPeriodButton']??"Loan End Date"}',style: TextStyle(fontWeight: FontWeight.bold,
+                               fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.02,),
+                               Text('${data?['PaymentPeriod']??"${data?['Loan End Date']??"Loan End Date"}"}',style: TextStyle(
+                               fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                             Text('${data?['Acquistion']??"Amount Paid"}',style: TextStyle(fontWeight: FontWeight.bold,
+                               fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.02,),
+                               Text('${data?['delivery']??"Shs.${myFormat.format(data?['Paid Money']??"")}"}',style: TextStyle(
+                               fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                                  Text('${data?['app date']??"Loan Start Date".toString()}',style: TextStyle(fontWeight: FontWeight.bold,
+                                    fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.width*0.02,),
+                                    Text('${data?['Application Date']??"${data?['Loan Start Date']??""}".toString()}',style: TextStyle(
+                                    fontSize: 20),),SizedBox(height: MediaQuery.of(context).size.height*0.02),
+                          
                           ],
                         ),
                       )],
                     ),
-
-                    
                   );
                 })
                 .toList()
@@ -231,7 +217,7 @@ class _LoanViewState extends State<LoanView> {
              child: StreamBuilder<QuerySnapshot>(
                  stream:  FirebaseFirestore.instance
         .collection('Adverts')
-        .where("button", isEqualTo: "Request Loan")
+        .where("loan", isEqualTo: "Yes")
         .snapshots(includeMetadataChanges: true),
                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
@@ -266,12 +252,14 @@ class _LoanViewState extends State<LoanView> {
                                             ),),
                                 ),ElevatedButton(onPressed: (){
                                    final sellerid  = data?['Price'];
+                                    final id  = data?['user'];
                          String imageUrl = data?['pk']??"";
                            String image = data?['imageUrl']??"";
                          String carname = '${data?['Car Name']??""} ${data?['Car Model']??""}';
                        Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  AdvertDetails(imageUrl,sellerid,carname,image)),
+                    MaterialPageRoute(builder: (context) =>  AdvertDetails(imageUrl,sellerid,carname,image,
+                    id,data?['email']??"",data?['rate']??"",data?['pk']??"")),
                   );
                                 }, child: Text('Loan'))
                                 ],
@@ -290,7 +278,7 @@ class _LoanViewState extends State<LoanView> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator(),);
               }
-              return Text('Lets go oti bwoti');
+              return Text('Ooops an error has occured');
                  }),
 
            ),
@@ -351,7 +339,11 @@ class AdvertDetails extends StatefulWidget {
     final   price;
     final   carname;
     final image;
-  AdvertDetails(this.myParam,this.price,this.carname,this.image);
+     final sellerid;
+      final email;
+   final rate;  
+   final advertpk; 
+  AdvertDetails(this.myParam,this.price,this.carname,this.image,this.sellerid,this.email,this.rate,this.advertpk);
 
   @override
   State<AdvertDetails> createState() => _AdvertDetailsState();
@@ -425,7 +417,8 @@ class _AdvertDetailsState extends State<AdvertDetails> {
                   ),ElevatedButton(onPressed: (){
                       Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  RequestLoan(widget.price??0,widget.carname,widget.image)),
+              MaterialPageRoute(builder: (context) =>  RequestLoan(widget.price??0,widget.carname,widget.image,widget.sellerid,widget.email,widget.rate,
+              widget.advertpk)),
             );
                     
                   }, child: Text('Request Loan'))

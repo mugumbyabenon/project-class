@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:car_loan_project/views/admin.dart';
+import 'package:car_loan_project/views/buy.dart';
 //import 'package:car_loan_project/views/categories.dart';
 import 'package:car_loan_project/views/loan.dart';
 import 'package:car_loan_project/views/login_view.dart';
@@ -227,11 +228,20 @@ class _HomeInterfaceState extends State<HomeInterface> {
               context,
               MaterialPageRoute(builder: (context) => Category('Spareparts', 'Category')),
             );break;
-                 
+              case MenuAction.loans:
+               Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Category('Request Loan/Buy', 'button')),
+            );
+            break;    
                   }
                 }),
                 itemBuilder: (context) {
                   return [ 
+                    const PopupMenuItem(
+                      value: MenuAction.loans,
+                      child: Text('Loan Products'),
+                      ),
                     const PopupMenuItem(
                       value: MenuAction.cars,
                       child: Text('Cars'),
@@ -309,12 +319,22 @@ class _HomeInterfaceState extends State<HomeInterface> {
               context,
               MaterialPageRoute(builder: (context) => Category('Spareparts', 'Category')),
             );break;
+            case MenuAction.loans:
+               Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Category('Request Loan/Buy', 'button')),
+            );
+            break;
                  
                   }
                 }),
                 itemBuilder: (context) {
                   return [ 
                     const PopupMenuItem(
+                      value: MenuAction.loans,
+                      child: Text('Loan Product'),
+                      ),
+                    const PopupMenuItem(   
                       value: MenuAction.cars,
                       child: Text('Cars'),
                       ),  const PopupMenuItem(
@@ -437,12 +457,14 @@ class _UserInformationState extends State<UserInformations> {
                       final sellerid  = data?['Price'];
                        String imageUrl = data?['pk']??"";
                         String image = data?['imageUrl']??"";
+                        String id = data?['user']??"";
                        String carname = '${data?['Car Name']??""} ${data?['Car Model']??""}';
                         User? user = FirebaseAuth.instance.currentUser;
              
                      Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  AdvertDetails(imageUrl,sellerid,carname,image,'${data?['button']??""}')),
+                MaterialPageRoute(builder: (context) =>  AdvertDetails(imageUrl,sellerid,carname,image,
+                '${data?['button']??""}',id,data?['email']??"",data?['rate']??"0",data?['pk']??"0")),
               );
                             //    showDialog (
                               //        context: context,
@@ -528,8 +550,12 @@ class AdvertDetails extends StatefulWidget {
       final   carname;
       final   image;
        final   category;
+        final   sellerid;
+         final   email;
+         final rate;
+         final advertpk;
      //   final   categor;
-  AdvertDetails(this.myParam,this.price,this.carname,this.image,this.category);
+  AdvertDetails(this.myParam,this.price,this.carname,this.image,this.category,this.sellerid,this.email,this.rate,this.advertpk);
 
   @override
   State<AdvertDetails> createState() => _AdvertDetailsState();
@@ -595,15 +621,18 @@ class _AdvertDetailsState extends State<AdvertDetails> {
                 children: [
                   Expanded(child: Text('Shs.${myFormat.format(widget.price)}',style: GoogleFonts.bebasNeue(fontSize: 35))),SizedBox(
                     width: MediaQuery.of(context).size.width*0.12,
-                  ),ElevatedButton(onPressed: (){
+                  ),ElevatedButton(onPressed: () async{
                       User? user = FirebaseAuth.instance.currentUser;
                            if (user != null) {
-                            if (widget.category == 'Request Loan'){
+                            if (widget.category == 'Request Loan/Buy') {
+                     
+                    await    BuyLoan(context, widget.price, widget.carname, widget.image, widget.sellerid, widget.email,widget.rate,widget.advertpk);
+            } else {
                       Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  RequestLoan(widget.price??0,widget.carname,widget.image)),
-            );} else {
-               ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content:Text('This feature is currently not availble. Please wait for final product')));
+              MaterialPageRoute(builder: (context) =>  Buy(widget.advertpk)),
+            );
+           //    ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content:Text('This feature is currently not availble. Please wait for final product')));
             }
             } else {
              ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content:Text('Please login inorder to apply for loan')));    
@@ -740,7 +769,8 @@ class _AdvertDetailsState extends State<AdvertDetails> {
                                     });
                  Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  AdvertDetails(widget.myParam,widget.price,widget.carname,widget.image,widget.category,)),
+              MaterialPageRoute(builder: (context) =>  AdvertDetails(widget.myParam,widget.price,
+              widget.carname,widget.image,widget.category,widget.sellerid,widget.email,widget.rate,widget.advertpk)),
             );                     
                                     } else{
                                       log('no');
