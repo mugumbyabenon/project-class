@@ -42,7 +42,7 @@ class _WalletState extends State<Wallet> {
           elevation: 0.0,
         title: Center(child: Row(
           children: [
-            Text('Loan Repayment',style: TextStyle(color: Colors.white),),SizedBox(width: 130,),
+            Expanded(child: Text('Loan Repayment',style: TextStyle(color: Colors.white),)),SizedBox(width: 130,),
               PopupMenuButton <MenuAction>(iconSize:  MediaQuery.of(context).size.width*0.08,icon: Icon(Icons.account_balance_wallet,color: Colors.white,),
                     onSelected: ((value) async {
                       switch (value){
