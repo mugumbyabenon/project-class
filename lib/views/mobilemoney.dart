@@ -39,7 +39,7 @@ class _PhoneMobileMoneyState extends State<PhoneMobileMoney> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => MobileMoney(widget.pk, widget.paids,
-                        widget.balances, UgandaNetwork.airtel)),
+                        widget.balances, UgandaNetwork.airtel, 'Airtel')),
               );
             },
             child: Container(
@@ -69,7 +69,7 @@ class _PhoneMobileMoneyState extends State<PhoneMobileMoney> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => MobileMoney(widget.pk, widget.paids,
-                        widget.balances, UgandaNetwork.mtn)),
+                        widget.balances, UgandaNetwork.mtn, 'MTN')),
               );
             },
             child: Container(
@@ -104,7 +104,8 @@ class MobileMoney extends StatefulWidget {
   final paids;
   final balances;
   final network;
-  MobileMoney(this.pk, this.paids, this.balances, this.network);
+  final title;
+  MobileMoney(this.pk, this.paids, this.balances, this.network, this.title);
   // const MobileMoney({super.key});
 
   @override
@@ -190,13 +191,14 @@ class _MobileMoneyState extends State<MobileMoney> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Mobile Money for Airtel',
+          'Mobile Money for ${widget.title}',
           style: TextStyle(color: Colors.white),
         ),
         leading: BackButton(color: Colors.orange),
         backgroundColor: Colors.black,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
             height: 100,
@@ -210,7 +212,7 @@ class _MobileMoneyState extends State<MobileMoney> {
                   size: 40.0,
                 ),
                 hintText: '2567XXXXXXXX',
-                labelText: 'Airtel phone Number',
+                labelText: 'Phone Number to bill on this network',
               ),
               keyboardType: TextInputType.phone,
             ),
