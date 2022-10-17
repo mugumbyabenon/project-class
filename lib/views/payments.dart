@@ -1,12 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:car_loan_project/utilities/showErrorDialog.dart';
+import 'package:car_loan_project/views/mobilemoney.dart';
 import 'package:car_loan_project/views/notes_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
-
 
 class CardMonthInputFormatter extends TextInputFormatter {
   @override
@@ -59,8 +59,6 @@ class CardNumberInputFormatter extends TextInputFormatter {
         selection: new TextSelection.collapsed(offset: string.length));
   }
 }
-
-
 
 class PaymentCard {
   CardType? type;
@@ -303,24 +301,21 @@ class CardUtils {
   }
 }
 
-
-
 class Strings {
   static const String appName = 'Make Payment';
   static const String fieldReq = 'This field is required';
   static const String numberIsInvalid = 'Card is invalid';
   static const String pay = 'Validate and Pay';
-
 }
 
-
 class MakePayment extends StatefulWidget {
-  MakePayment({Key? key, this.title,this.pk,this.balance,this.paid}) : super(key: key);
+  MakePayment({Key? key, this.title, this.pk, this.balance, this.paid})
+      : super(key: key);
   final String? title;
- final String? pk;
-  final  balance;
+  final String? pk;
+  final balance;
   final paid;
-  
+
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
@@ -337,7 +332,7 @@ class _MyHomePageState extends State<MakePayment> {
 
   @override
   void initState() {
-     _amountpaid = TextEditingController();
+    _amountpaid = TextEditingController();
     super.initState();
     _paymentCard.type = CardType.Others;
     numberController.addListener(_getCardTypeFrmNumber);
@@ -345,46 +340,55 @@ class _MyHomePageState extends State<MakePayment> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
         key: _scaffoldKey,
-        appBar:  AppBar(
+        appBar: AppBar(
           backgroundColor: Colors.black,
           leading: BackButton(color: Colors.orange),
-          title: Center(child:  Text(widget.title!,style: TextStyle(color: Colors.white),)),
+          title: Center(
+              child: Text(
+            widget.title!,
+            style: TextStyle(color: Colors.white),
+          )),
         ),
-        body:  Container(
+        body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child:  Form(
+          child: Form(
               key: _formKey,
               autovalidateMode: _autoValidateMode,
-              child:  ListView(
+              child: ListView(
                 children: <Widget>[
-                const   SizedBox(
+                  const SizedBox(
                     height: 20.0,
-                  ),  TextFormField(
+                  ),
+                  TextFormField(
                     controller: _amountpaid,
                     decoration: const InputDecoration(
-                      border:  UnderlineInputBorder(),
+                      border: UnderlineInputBorder(),
                       filled: true,
                       icon: const Icon(
                         Icons.attach_money,
                         size: 40.0,
                       ),
-                      hintText: 'This amount will be deducted from your account',
+                      hintText:
+                          'This amount will be deducted from your account',
                       labelText: 'Amount to pay',
                     ),
                     onSaved: (String? value) {
                       _card.name = value;
                     },
                     keyboardType: TextInputType.number,
-                    
                   ),
                   const SizedBox(
                     height: 50.0,
-                  ),Text('**The payment method accepts Visa and Mastercard payments',style: TextStyle(color: Colors.orange),),
-                   TextFormField(
+                  ),
+                  Text(
+                    '**The payment method accepts Visa and Mastercard payments',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                  TextFormField(
                     decoration: const InputDecoration(
-                      border:  UnderlineInputBorder(),
+                      border: UnderlineInputBorder(),
                       filled: true,
                       icon: const Icon(
                         Icons.person,
@@ -403,7 +407,7 @@ class _MyHomePageState extends State<MakePayment> {
                   const SizedBox(
                     height: 30.0,
                   ),
-                   TextFormField(
+                  TextFormField(
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -428,12 +432,12 @@ class _MyHomePageState extends State<MakePayment> {
                   const SizedBox(
                     height: 30.0,
                   ),
-                   TextFormField(
+                  TextFormField(
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
-                       LengthLimitingTextInputFormatter(4),
+                      LengthLimitingTextInputFormatter(4),
                     ],
-                    decoration:  InputDecoration(
+                    decoration: InputDecoration(
                       border: const UnderlineInputBorder(),
                       filled: true,
                       icon: new Image.asset(
@@ -450,19 +454,19 @@ class _MyHomePageState extends State<MakePayment> {
                       _paymentCard.cvv = int.parse(value!);
                     },
                   ),
-                   SizedBox(
+                  SizedBox(
                     height: 30.0,
                   ),
-                   TextFormField(
+                  TextFormField(
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
-                       LengthLimitingTextInputFormatter(4),
-                       CardMonthInputFormatter()
+                      LengthLimitingTextInputFormatter(4),
+                      CardMonthInputFormatter()
                     ],
-                    decoration:  InputDecoration(
+                    decoration: InputDecoration(
                       border: const UnderlineInputBorder(),
                       filled: true,
-                      icon:  Image.asset(
+                      icon: Image.asset(
                         'assets/images/calender.png',
                         width: 40.0,
                         color: Colors.grey[600],
@@ -478,18 +482,16 @@ class _MyHomePageState extends State<MakePayment> {
                       _paymentCard.year = expiryDate[1];
                     },
                   ),
-                const   SizedBox(
+                  const SizedBox(
                     height: 50.0,
                   ),
-                   Container(
+                  Container(
                     alignment: Alignment.center,
                     child: _getPayButton(),
                   )
                 ],
               )),
-        )
-        
-        );
+        ));
   }
 
   @override
@@ -509,7 +511,7 @@ class _MyHomePageState extends State<MakePayment> {
     });
   }
 
-  void _validateInputs( final pk, final balance) async {
+  void _validateInputs(final pk, final balance) async {
     final FormState form = _formKey.currentState!;
     if (!form.validate()) {
       setState(() {
@@ -519,8 +521,9 @@ class _MyHomePageState extends State<MakePayment> {
       _showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
-       var collection = await FirebaseFirestore.instance.collection('Loans').doc('');
-        print('$balance');
+      var collection =
+          await FirebaseFirestore.instance.collection('Loans').doc('');
+      print('$balance');
       // Encrypt and send send payment details to payment gateway
       _showInSnackBar('Payment card is valid');
     }
@@ -528,34 +531,34 @@ class _MyHomePageState extends State<MakePayment> {
 
   Widget _getPayButton() {
     if (Platform.isIOS) {
-      return  CupertinoButton(
-        onPressed:(){},// _validateInputs(widget.pk,widget.balance),
+      return CupertinoButton(
+        onPressed: () {}, // _validateInputs(widget.pk,widget.balance),
         color: CupertinoColors.activeBlue,
         child: const Text(
           Strings.pay,
-          style:  TextStyle(fontSize: 17.0),
+          style: TextStyle(fontSize: 17.0),
         ),
       );
     } else {
-      return  ElevatedButton(
-        onPressed:() async{
+      return ElevatedButton(
+        onPressed: () async {
           final FormState form = _formKey.currentState!;
-    if (!form.validate()) {
-      setState(() {
-        _autoValidateMode =
-            AutovalidateMode.always; // Start validating on every change.
-      }); 
-    _showInSnackBar('Please fix the errors in red before submitting.');
-    } else {
-      try{
-        PaymentProcess(widget.pk, widget.paid, _amountpaid.text, widget.balance, context);
-    } catch (e){
-      throw showErrorDialog(context, '$e');
-    }
-    
-    } 
-        },// _validateInputs(widget.pk,widget.balance),
-        child:  Text(
+          if (!form.validate()) {
+            setState(() {
+              _autoValidateMode =
+                  AutovalidateMode.always; // Start validating on every change.
+            });
+            _showInSnackBar('Please fix the errors in red before submitting.');
+          } else {
+            try {
+              PaymentProcess(widget.pk, widget.paid, _amountpaid.text,
+                  widget.balance, context);
+            } catch (e) {
+              throw showErrorDialog(context, '$e');
+            }
+          }
+        }, // _validateInputs(widget.pk,widget.balance),
+        child: Text(
           Strings.pay.toUpperCase(),
           style: const TextStyle(fontSize: 17.0),
         ),
@@ -571,97 +574,119 @@ class _MyHomePageState extends State<MakePayment> {
   }
 }
 
-
-
-PaymentProcess(final pk,final paids,final amountpaid,final balances,context) async{    
-       var collection = await FirebaseFirestore.instance.collection('Loans').doc('${pk}');
-      // log('${_amountpaid.text.trim()}');
-      if(balances > int.parse(amountpaid)){
-      int car = int.parse(amountpaid);
-      int paid = paids + car;
-       int balance = balances - car;
-        await   collection.update({'Balance': '${balance.toString()}'});
-         await   collection.update({'Paid Money': paid});
-          var docSnapshot = await collection.get();
-          if (docSnapshot.exists) {
-            Map<String, dynamic>? data = docSnapshot.data();
-               final IntialCompanyInterest=data?['Company Interest']??1;
-               final sellerID=data?['selleremail']??1;
-               final month =int.parse(data?['NumberOfMonths']??1); 
-               final monthlyfee =balance/month;
-               var companyinterest= await FirebaseFirestore.instance.collection('CompanyInterest').doc('interest'); 
-               final company = await companyinterest.get(); 
-                  await   collection.update({'MonthlyFee': double.parse((monthlyfee). toStringAsFixed(1)).ceil().toString()});      
-               if (IntialCompanyInterest>car){
-                final remainingcompanyinterest= IntialCompanyInterest - car;
-                 await   collection.update({'Company Interest':remainingcompanyinterest });
-                  if (company.exists) {
-            Map<String, dynamic>? comp = company.data();
-               final home = comp?['interest']??1;
-               final k =home+car;
-               companyinterest.update({'interest':k});
-               }
-               }else{
-                    if (company.exists) {
-            Map<String, dynamic>? comp = company.data();
-               final home = comp?['interest']??1;
-               final k =home+IntialCompanyInterest;
-               companyinterest.update({'interest':k});
-               }
-                 final update =car - IntialCompanyInterest;
-               var another = await FirebaseFirestore.instance.collection('users').doc('${sellerID}').get();
-                await   collection.update({'Company Interest':0 });
-               if (another.exists) {
-            Map<String, dynamic>? datas = another.data();
-            final sellerportion=datas?['My Money']??0;
-             final pending=datas?['Pending']??0;
-             if(pending >= update){
-              final kk= pending -update;
-              await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'Pending':kk});
-             }
-             if(pending <= update){
-               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'Pending':0});
-             }
-            if(sellerportion==null){
-               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'My Money':update});
-            }else{
-              final sellermoney = sellerportion+update;
-               await FirebaseFirestore.instance.collection('users').doc('${sellerID}').update({'My Money':sellermoney}); 
-            }
-            }}
-            }
-         if (balance <=0){
-          await collection.delete();
-           Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
-                 ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text('Thank you for clearing your loan'),
-      duration: new Duration(seconds: 3),
-    ));
-         }
-       log('$paid');
-              Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
-      // Encrypt and send send payment details to payment gateway
-       ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text('Payment is being processed.Your account balance will then be updated'),
-      duration: new Duration(seconds: 3),
-    ));
-     }
-      else { if(balances == 1){
-          await collection.delete();
-           Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
-                 ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text('Thank you for clearing your loan'),
-      duration: new Duration(seconds: 3),
-    ));} else{
-        ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text('The amount you want to pay is greater than the pending balance'),
-      duration: new Duration(seconds: 3),
-    ));}
-       
+PaymentProcess(
+    final pk, final paids, final amountpaid, final balances, context) async {
+  var collection =
+      await FirebaseFirestore.instance.collection('Loans').doc('${pk}');
+  // log('${_amountpaid.text.trim()}');
+  if (balances > int.parse(amountpaid)) {
+    int car = int.parse(amountpaid);
+    int paid = paids + car;
+    int balance = balances - car;
+    await collection.update({'Balance': '${balance.toString()}'});
+    await collection.update({'Paid Money': paid});
+    var docSnapshot = await collection.get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      final IntialCompanyInterest = data?['Company Interest'] ?? 1;
+      final sellerID = data?['selleremail'] ?? 1;
+      final month = int.parse(data?['NumberOfMonths'] ?? 1);
+      final monthlyfee = balance / month;
+      var companyinterest = await FirebaseFirestore.instance
+          .collection('CompanyInterest')
+          .doc('interest');
+      final company = await companyinterest.get();
+      await collection.update({
+        'MonthlyFee':
+            double.parse((monthlyfee).toStringAsFixed(1)).ceil().toString()
+      });
+      if (IntialCompanyInterest > car) {
+        final remainingcompanyinterest = IntialCompanyInterest - car;
+        await collection.update({'Company Interest': remainingcompanyinterest});
+        if (company.exists) {
+          Map<String, dynamic>? comp = company.data();
+          final home = comp?['interest'] ?? 1;
+          final k = home + car;
+          companyinterest.update({'interest': k});
+        }
+      } else {
+        if (company.exists) {
+          Map<String, dynamic>? comp = company.data();
+          final home = comp?['interest'] ?? 1;
+          final k = home + IntialCompanyInterest;
+          companyinterest.update({'interest': k});
+        }
+        final update = car - IntialCompanyInterest;
+        var another = await FirebaseFirestore.instance
+            .collection('users')
+            .doc('${sellerID}')
+            .get();
+        await collection.update({'Company Interest': 0});
+        if (another.exists) {
+          Map<String, dynamic>? datas = another.data();
+          final sellerportion = datas?['My Money'] ?? 0;
+          final pending = datas?['Pending'] ?? 0;
+          if (pending >= update) {
+            final kk = pending - update;
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('${sellerID}')
+                .update({'Pending': kk});
+          }
+          if (pending <= update) {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('${sellerID}')
+                .update({'Pending': 0});
+          }
+          if (sellerportion == null) {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('${sellerID}')
+                .update({'My Money': update});
+          } else {
+            final sellermoney = sellerportion + update;
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('${sellerID}')
+                .update({'My Money': sellermoney});
+          }
+        }
       }
-  
-    
+    }
+    if (balance <= 0) {
+      await collection.delete();
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+        content: new Text('Thank you for clearing your loan'),
+        duration: new Duration(seconds: 3),
+      ));
+    }
+    log('$paid');
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+    // Encrypt and send send payment details to payment gateway
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text(
+          'Payment is being processed.Your account balance will then be updated'),
+      duration: new Duration(seconds: 3),
+    ));
+  } else {
+    if (balances == 1) {
+      await collection.delete();
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => NotesView()), (r) => false);
+      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+        content: new Text('Thank you for clearing your loan'),
+        duration: new Duration(seconds: 3),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+        content: new Text(
+            'The amount you want to pay is greater than the pending balance'),
+        duration: new Duration(seconds: 3),
+      ));
+    }
+  }
 }
