@@ -865,7 +865,7 @@ class _MyWidgetState extends State<MyWidget> {
         Visibility(
           visible: isLoading,
           child: Positioned.fill(
-            right: 6,
+            right: 89,
             left: 5,
             top: 5,
             child: BackdropFilter(
