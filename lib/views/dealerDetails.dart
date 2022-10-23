@@ -53,12 +53,14 @@ class DealerDetails extends StatelessWidget {
                           Text('${data?['company name']??""}'),
                         ],
                       ),SizedBox(width: MediaQuery.of(context).size.width * 0.2,),
-                      Column(
-                        children: [
-                          Text('Product Status',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-                           Text('$productstatus'),
-                        ],
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text('Product Status',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                             Text('$productstatus'),
+                          ],
+                        ),
                       )],
                       ), SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
                          Row(
@@ -67,17 +69,19 @@ class DealerDetails extends StatelessWidget {
                           Text('Phone Number',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),SizedBox(height: 10,),
                           Text('${data?['phone_number']??""}'),
                         ],
-                      ),SizedBox(width: MediaQuery.of(context).size.width * 0.2,),Column(
-                        children: [
-                          Text('Advertiser name',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-                           Row(
-                             children: [
-                               Text('${data?['first_name']??""}'),
-                               SizedBox(width: 10,) ,Text('${data?['last name']??""}'),
-                             ],
-                           ),
-                        ],
+                      ),SizedBox(width: MediaQuery.of(context).size.width * 0.2,),Expanded(
+                        child: Column(
+                          children: [
+                            Text('Advertiser name',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                             Row(
+                               children: [
+                                 Text('${data?['first_name']??""}'),
+                                 SizedBox(width: 10,) ,Text('${data?['last name']??""}'),
+                               ],
+                             ),
+                          ],
+                        ),
                       )],
                       ), SizedBox(height: MediaQuery.of(context).size.height * 0.03,),Row(
             children: <Widget>[

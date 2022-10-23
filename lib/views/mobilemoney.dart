@@ -1,12 +1,15 @@
 import 'dart:developer';
-import 'dart:ffi';
+import 'dart:io';
 import 'dart:ui';
+import 'dart:math';
+import 'package:flutter/material.dart';
 
 import 'package:car_loan_project/views/payments.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:uganda_mobile_money/uganda_mobile_money.dart';
 
 class PhoneMobileMoney extends StatefulWidget {
@@ -132,7 +135,10 @@ class _MobileMoneyState extends State<MobileMoney> {
   final secretKey = "FLWSECK-XXXXX-X";
   // flutterwave secret key
   UgandaMobileMoney _mobileMoney =
-      UgandaMobileMoney(secretKey: 'FLWSECK_TEST0f3fac06ablf');
+      UgandaMobileMoney(secretKey: 'FLWSECK_TEST-95379f99c1de2f25910c5b87e8d96d74-X');
+
+
+     
 
   void chargeClient(final pk, final paids, final balances) async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -140,15 +146,16 @@ class _MobileMoneyState extends State<MobileMoney> {
       String? username = user.displayName ?? ''; // <-- Us,
       String? uid = user.uid;
       String? email = user.email;
-
-      final taxref = DateTime.now().toString() + uid;
-      log('$taxref');
+             Random rand = Random();
+    int number = rand.nextInt(2000);
+      final taxref = 'android123489$number';
+     // log('$taxref');
       MomoPayResponse response = await _mobileMoney.chargeClient(
         MomoPayRequest(
             txRef: "$taxref", // should be unique for each transaction
             amount: "${_amounttopay.text}", // amount in UGX you want to charge
             email: "$email", // email of the person you want to charge
-            phoneNumber: "${_phone.text}", // clients phone number
+            phoneNumber: "256703882021", // clients phone number
             fullname: "$username", // full name of client
             redirectUrl: "https://yoursite.com", // redirect url after payment
             voucher: "128373", // useful for vodafone. you can ignore this
@@ -156,8 +163,8 @@ class _MobileMoneyState extends State<MobileMoney> {
                 UgandaNetwork.airtel // network, can be either mtn or airtel
             ),
       );
-      log(response.message);
-      log('$taxref');
+      print(response.message);
+     // log('$taxref');
       verifyTransaction(
           taxref, pk, paids, _amounttopay.text, balances, context);
     }
@@ -167,6 +174,8 @@ class _MobileMoneyState extends State<MobileMoney> {
       balances, context) async {
     _mobileMoney.verifyTransaction('$taxrefe').then((value) async {
       if (value == TransactionStatus.failed) {
+         await   PaymentProcess(widget.pk, paids, amountpaid,
+                  balances, context);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Failed")));
       } else if (value == TransactionStatus.pending) {
@@ -234,6 +243,7 @@ class _MobileMoneyState extends State<MobileMoney> {
           Center(
             child: ElevatedButton(
                 onPressed: () async {
+               //   MakePayment();
                   chargeClient(widget.pk, widget.paids, widget.balances);
                 },
                 child: Text('Pay')),
@@ -243,3 +253,41 @@ class _MobileMoneyState extends State<MobileMoney> {
     );
   }
 }
+
+
+
+
+// void main() {
+//   runApp(flutterwaveapp());
+// }
+
+// class flutterwaveapp extends StatelessWidget {
+//   const flutterwaveapp({key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: farm_tools_screen(),
+//     );
+//   }
+// }
+
+
+
+// void main() {
+//   runApp(flutterwaveapp());
+// }
+
+// class flutterwaveapp extends StatelessWidget {
+//   const flutterwaveapp({key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: farm_tools_screen(),
+//     );
+//   }
+// }
+

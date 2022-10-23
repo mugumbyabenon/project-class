@@ -551,7 +551,7 @@ class _MyHomePageState extends State<MakePayment> {
             _showInSnackBar('Please fix the errors in red before submitting.');
           } else {
             try {
-              PaymentProcess(widget.pk, widget.paid, _amountpaid.text,
+           await   PaymentProcess(widget.pk, widget.paid, _amountpaid.text,
                   widget.balance, context);
             } catch (e) {
               throw showErrorDialog(context, '$e');
