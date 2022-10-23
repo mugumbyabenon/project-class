@@ -28,7 +28,7 @@ class _PhoneMobileMoneyState extends State<PhoneMobileMoney> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Choose Option',
+          'Choose Options',
           style: TextStyle(color: Colors.white),
         ),
         leading: BackButton(color: Colors.orange),
